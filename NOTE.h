@@ -31,7 +31,7 @@ public:
     const char* getPhoneNumber() const;
     void getBirthday(int& day, int& month, int& year) const;
 
-    // Перегрузка операторов
+    // Перегрузка операторовA
     friend std::ostream& operator<<(std::ostream& os, const NOTE& note);
     friend std::istream& operator>>(std::istream& is, NOTE& note);
 
