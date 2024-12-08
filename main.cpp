@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "NOTE.h"
 
 void addNote(NOTE*& notes, int& count) {
@@ -8,63 +9,22 @@ void addNote(NOTE*& notes, int& count) {
     }
     delete[] notes;
     notes = temp;
-
-    std::cout << "Enter last name: ";
-    char lastName[256];
-    std::cin.getline(lastName, 256);
-
-    std::cout << "Enter first name: ";
-    char firstName[256];
-    std::cin.getline(firstName, 256);
-
-    std::cout << "Enter phone number: ";
-    char phoneNumber[256];
-    std::cin.getline(phoneNumber, 256);
-
-    std::cout << "Enter birthday (day month year): ";
-    int day, month, year;
-    std::cin >> day >> month >> year;
-    std::cin.ignore();
-
-    notes[count] = NOTE(lastName, firstName, phoneNumber, day, month, year);
+    std::cin >> notes[count];
     ++count;
 }
 
-void displayNotes(NOTE* notes, int count) {
-    for (int i = 0; i < count; ++i) {
-        std::cout << notes[i] << std::endl;
-    }
+void sortNotes(NOTE* notes, int count) {
+    std::sort(notes, notes + count);
 }
 
-void searchByPhoneNumber(NOTE* notes, int count) {
-    std::cout << "Enter phone number to search: ";
-    char phoneNumber[256];
-    std::cin.getline(phoneNumber, 256);
-
+void findByPhoneNumber(NOTE* notes, int count, const char* phoneNumber) {
     for (int i = 0; i < count; ++i) {
         if (strcmp(notes[i].getPhoneNumber(), phoneNumber) == 0) {
             std::cout << notes[i] << std::endl;
             return;
         }
     }
-    std::cout << "No matching record found." << std::endl;
-}
-
-void sortNotesByBirthday(NOTE* notes, int count) {
-    for (int i = 0; i < count - 1; ++i) {
-        for (int j = 0; j < count - i - 1; ++j) {
-            int day1, month1, year1;
-            notes[j].getBirthday(day1, month1, year1);
-            int day2, month2, year2;
-            notes[j + 1].getBirthday(day2, month2, year2);
-
-            if (year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2)) {
-                NOTE temp = notes[j];
-                notes[j] = notes[j + 1];
-                notes[j + 1] = temp;
-            }
-        }
-    }
+    std::cout << "No record found with the given phone number." << std::endl;
 }
 
 int main() {
@@ -73,12 +33,7 @@ int main() {
     int choice;
 
     do {
-        std::cout << "Menu:" << std::endl;
-        std::cout << "1. Add a new note" << std::endl;
-        std::cout << "2. Display all notes" << std::endl;
-        std::cout << "3. Search by phone number" << std::endl;
-        std::cout << "4. Sort notes by birthday" << std::endl;
-        std::cout << "5. Exit" << std::endl;
+        std::cout << "1. Add Note\n2. Sort Notes\n3. Find by Phone Number\n4. Exit\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         std::cin.ignore();
@@ -88,21 +43,22 @@ int main() {
                 addNote(notes, count);
                 break;
             case 2:
-                displayNotes(notes, count);
+                sortNotes(notes, count);
                 break;
-            case 3:
-                searchByPhoneNumber(notes, count);
+            case 3: {
+                char phoneNumber[256];
+                std::cout << "Enter Phone Number to search: ";
+                std::cin.getline(phoneNumber, 256);
+                findByPhoneNumber(notes, count, phoneNumber);
                 break;
+            }
             case 4:
-                sortNotesByBirthday(notes, count);
-                break;
-            case 5:
                 std::cout << "Exiting..." << std::endl;
                 break;
             default:
                 std::cout << "Invalid choice. Please try again." << std::endl;
         }
-    } while (choice != 5);
+    } while (choice != 4);
 
     delete[] notes;
     return 0;
